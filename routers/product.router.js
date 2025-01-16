@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/product.controller');
 const upload = require('../utili/multerConfig.js');
-router.post('/',upload.single('productImage'),productController.createProduct);
-router.get('/',productController.getProducts);
-router.post('/one',productController.produect);
-router.post('/del',productController.deleteProductById);
-router.post('/edit',productController.updateProductById);
+const { Isadmin, Isuser, authMW } = require('../utili/auth.js');
+router.post('/',Isadmin,upload.single('productImage'),productController.createProduct);
+router.get('/',authMW,productController.getProducts);
+router.post('/one',Isuser,productController.produect);
+router.post('/del',Isadmin,productController.deleteProductById);
+router.post('/edit',Isadmin,productController.updateProductById);
 
 module.exports= router;

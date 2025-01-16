@@ -19,26 +19,21 @@ exports.getProducts = async (req, res) => {
 }
 exports.deleteProductById = async (req, res) => {
     const { data } = req.body;
-    console.log(req.body);
 
-    // if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-    //   return res.status(400).json({ message: 'Invalid product ID' });
-    // }
+
     try {
-        const product = await productModel.findByIdAndDelete(data);
-        res.status(200).json(product);
-    }
-    catch (err) {
+    await productModel.findByIdAndUpdate(data, { Isdeleted: true }, { new: true });
+
+        res.status(200).json({deleted:"is deleted"});
+    } catch (err) {
         res.status(500).json({ error: err.message });
     }
 }
 exports.updateProductById = async (req, res) => {
     const { id, name, desc, price, imgeURL } = req.body;
-    // if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-    // const {} = req.body; 
-    //     return res.status(400).json({ message: 'Invalid product ID' });
-    //   }
+
     const updateFields = { name, desc, price, imgeURL };
+    // req.body.imgeURL = req.file.path;
 
   
     const filteredFields = Object.fromEntries(
@@ -58,7 +53,7 @@ exports.produect= async (req,res)=>{
 
     try{
         const product = await productModel.findById(id);
-        console.log(id);
+        console.log(product);
         
         res.status(200).json(product);
     }
