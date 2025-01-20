@@ -6,11 +6,11 @@ exports.addorder = async (req, res) => {
         const Orders = await order.find({ produect });
         // console.log(produect);
         
-        console.log(Orders[0].received);
+        console.log(req.body);
         
         let Order=false
         // if (!Orders[0].received) {}
-            Order = await order.findOneAndUpdate({ produect,received:false }, { $inc: { qty: 1 } }, { new: true });
+            Order = await order.findOneAndUpdate({ produect,received:false ,Isdeleted:true}, { $inc: { qty: 1 } }, { new: true });
 
         
 
@@ -41,18 +41,18 @@ exports.getcart = async (req, res) => {
 }
 exports.deleteOrderById = async (req, res) => {
     const { data } = req.body;
-    console.log(req.body);
+    
 
     // if (!id || !mongoose.Types.ObjectId.isValid(id)) {
     //   return res.status(400).json({ message: 'Invalid Order ID' });
     // }
-    try {
-        const Order = await order.findByIdAndDelete(data);
-        res.status(200).json(Order);
-    }
-    catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+   try {
+       await order.findByIdAndUpdate(data, { Isdeleted: true }, { new: true });
+   
+           res.status(200).json({deleted:"is deleted"});
+       } catch (err) {
+           res.status(500).json({ error: err.message });
+       }
 }
 exports.getadmin = async (req, res) => {
 

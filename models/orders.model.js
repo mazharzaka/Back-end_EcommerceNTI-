@@ -22,6 +22,11 @@ const order = new mongoose.Schema({
     received:{
         type:Boolean,
         required:true
+
+    },
+    Isdeleted: {
+        type: Boolean,
+        default: false
     }
 })
 const Order = mongoose.model('Order', order);
