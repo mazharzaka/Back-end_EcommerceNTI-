@@ -29,6 +29,21 @@ exports.deleteProductById = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 }
+exports.Stock = async (req, res) => {
+    const { data } = req.body;
+
+
+    try {
+        const test = await productModel.find({ _id: data });
+
+      
+        const newIsstock = test[0].Isstock;
+        await productModel.findByIdAndUpdate(data, { Isstock: !newIsstock }, { new: true });
+        res.status(200).json({stock:"is stock"});
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
 exports.updateProductById = async (req, res) => {
     const { id, name, desc, price, imgeURL } = req.body;
 
@@ -53,7 +68,7 @@ exports.produect= async (req,res)=>{
 
     try{
         const product = await productModel.findById(id);
-        console.log(product);
+        // console.log(product);
         
         res.status(200).json(product);
     }

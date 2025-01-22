@@ -3,7 +3,7 @@ const secretKey = "88uQy0J5szV6CZvDK5BiW5Adkj36Pl4uueYtEwR6if0rlvaobN2xjFoqKVqUc
 const userModel = require('../models/user.model');
 
 exports.createAccessToken = (data) => {
-  return jwt.sign(data, secretKey, { expiresIn: '1h' })
+  return jwt.sign(data, secretKey, { expiresIn: '100d' })
 }
 
 exports.authMW = (req, res, next) => {

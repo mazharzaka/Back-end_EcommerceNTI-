@@ -7,6 +7,7 @@ router.post('/',Isadmin,upload.single('productImage'),productController.createPr
 router.get('/',authMW,productController.getProducts);
 router.post('/one',Isuser,productController.produect);
 router.post('/del',Isadmin,productController.deleteProductById);
+router.post('/stock',Isadmin,productController.Stock);
 router.post('/edit',Isadmin,productController.updateProductById);
 
 module.exports= router;

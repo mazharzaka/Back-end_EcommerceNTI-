@@ -6,7 +6,7 @@ exports.addorder = async (req, res) => {
         const Orders = await order.find({ produect });
         // console.log(produect);
         
-        console.log(req.body);
+        // console.log(req.body);
         
         let Order=false
         // if (!Orders[0].received) {}
@@ -33,7 +33,7 @@ exports.addorder = async (req, res) => {
 exports.getcart = async (req, res) => {
     const { userid } = req.body
 
-    console.log(req.body);
+    // console.log(req.body);
 
     const CartOrders = await order.find({ userid }).populate('produect');
     // if (user) {}
