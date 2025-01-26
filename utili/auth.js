@@ -32,7 +32,7 @@ exports.Isuser =async (req, res,next) => {
       const verified = jwt.verify(token, secretKey);
       req.user = verified;
       const user =await userModel.findById(req.user.userId).populate("userType")
-      console.log(user);
+      // console.log(user);
       // console.log(req.user);
       if (user) {
         user.userType.desc === "user" ?next():res.status(404).json({ error:'is not user' });

@@ -10,7 +10,7 @@ exports.addorder = async (req, res) => {
         
         let Order=false
         // if (!Orders[0].received) {}
-            Order = await order.findOneAndUpdate({ produect,received:false ,Isdeleted:true}, { $inc: { qty: 1 } }, { new: true });
+            Order = await order.findOneAndUpdate({ produect,received:false ,Isdeleted:false}, { $inc: { qty: 1 } }, { new: true });
 
         
 
@@ -93,3 +93,15 @@ exports.received = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 }  
+exports.qty=async(req,res)=>{
+    const { id,qty } = req.body;
+
+    try{
+    const updatedOrder = await order.findByIdAndUpdate(id, { qty: qty }, { new: true });
+    res.status(200).json(updatedOrder);
+
+}
+catch{
+
+}
+}
