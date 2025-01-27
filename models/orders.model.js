@@ -1,20 +1,24 @@
 const mongoose = require('mongoose')
+mongoose.set('strictPopulate', false);
+
 const order = new mongoose.Schema({
-    produect: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'product',
-        required: true
-    },
+    cartItem:[
+        {
+          productId:{ type: mongoose.Schema.Types.ObjectId, ref : "product"},
+          qty:{
+            type:Number,
+            default:1
+          },
+          totalPrice:Number,
+        }
+      ],
+  
     userid: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user',
         required: true
     },
-    qty:{
-        type:Number,
-        required:true,
-        min:1
-    },
+    totalPriceCart:Number,
     status:{
         type:Boolean,
         required:true
