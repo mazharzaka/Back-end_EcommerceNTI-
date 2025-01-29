@@ -2,7 +2,7 @@ const order = require('../models/orders.model')
 
 exports.addorder = async (req, res) => {
     try {
-        let { produect } = req.body
+        // let { produect } = req.body
         // const Orders = await order.find({_id: produect });
         const Orders = await order.find({userid:req.user.userId,cartItem: { $elemMatch: { productId: req.body.productId } } });
         console.log(Orders);
@@ -13,7 +13,8 @@ exports.addorder = async (req, res) => {
     
         if (Orders.length > 0) {
             // const newQty = qty + 1;
-           const Order = await order.findOneAndUpdate({ cartItem: { $elemMatch: { productId: req.body.productId } }, received: false, Isdeleted: false }, { $inc: { "cartItem.$.qty": 1 } }, { new: true });
+           const Order = await order.findOneAndUpdate({ userid:req.user.userId,cartItem: { $elemMatch: { productId: req.body.productId ,received: false, Isdeleted: false} },  }, { $inc: { "cartItem.$.qty": 1 } }, { new: true });
+       
 
 console.log(Order);
 
@@ -22,6 +23,7 @@ console.log(Order);
         else {
                 
                 const Orders = await order.findOneAndUpdate({userid:req.user.userId}, { $push: { cartItem: req.body } },  { new: true })
+                
                 if (Orders) {
                     // const newQty = qty + 1;
         
@@ -32,8 +34,7 @@ console.log(Order);
             let result = new order({
                 userid: req.user.userId,
                 cartItem: [req.body],
-                status: false,
-                received: false,
+                
             });
             //   calcTotalPrice(result);
             await result.save();
@@ -55,14 +56,15 @@ exports.getcart = async (req, res) => {
     res.status(200).json(CartOrders)
 }
 exports.deleteOrderById = async (req, res) => {
-    const { data } = req.body;
+    const { productId,userid } = req.body;
 
+console.log(productId);
 
     // if (!id || !mongoose.Types.ObjectId.isValid(id)) {
     //   return res.status(400).json({ message: 'Invalid Order ID' });
     // }
     try {
-        await order.findByIdAndUpdate(data, { Isdeleted: true }, { new: true });
+    await order.findOneAndUpdate({ userid:userid,cartItem: { $elemMatch: { productId: productId,received: false, Isdeleted: false} },  }, {"cartItem.$.Isdeleted": true } , { new: true });
 
         res.status(200).json({ deleted: "is deleted" });
     } catch (err) {
@@ -100,7 +102,7 @@ exports.received = async (req, res) => {
     const newreceived = test[0].received;
 
     try {
-        const updatedOrder = await order.findByIdAndUpdate(id, { received: !newreceived }, { new: true });
+ await order.findByIdAndUpdate(id, { received: !newreceived }, { new: true });
         const CartOrders = await order.find().populate('produect').populate('userid');
 
         res.status(200).json(CartOrders);
@@ -109,14 +111,16 @@ exports.received = async (req, res) => {
     }
 }
 exports.qty = async (req, res) => {
-    const { id, qty } = req.body;
+    const { productId,userid ,qty} = req.body;
 
     try {
-        const updatedOrder = await order.findByIdAndUpdate(id, { qty: qty }, { new: true });
+        const updatedOrder= await order.findOneAndUpdate({ userid:userid,cartItem: { $elemMatch: { productId: productId,received: false, Isdeleted: false} },  }, {"cartItem.$.qty": qty } , { new: true });
+
         res.status(200).json(updatedOrder);
 
     }
-    catch {
+    catch(err){
+        res.status(500).json({ error: err.message });
 
     }
 }
