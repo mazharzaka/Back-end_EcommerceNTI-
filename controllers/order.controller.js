@@ -4,21 +4,14 @@ exports.addorder = async (req, res) => {
     try {
         // let { produect } = req.body
         // const Orders = await order.find({_id: produect });
-        const Orders = await order.find({userid:req.user.userId,cartItem: { $elemMatch: { productId: req.body.productId } } });
-        console.log(Orders);
-        console.log(req.body);
-
-
-
-    
-        if (Orders.length > 0) {
+        // const Orders = await order.find({userid:req.user.userId,cartItem: { $elemMatch: { productId: req.body.productId } } })
+        const Order = await order.findOneAndUpdate({ userid:req.user.userId,cartItem: { $elemMatch: { productId: req.body.productId ,received: false, Isdeleted: false ,CheckOut:false} },  }, { $inc: { "cartItem.$.qty": 1 } }, { new: true });
+        if (Order) {
             // const newQty = qty + 1;
-           const Order = await order.findOneAndUpdate({ userid:req.user.userId,cartItem: { $elemMatch: { productId: req.body.productId ,received: false, Isdeleted: false} },  }, { $inc: { "cartItem.$.qty": 1 } }, { new: true });
-       
 
-console.log(Order);
-
-            res.status(200).json(Order);
+           res.status(200).json(Order);
+          
+            
         }
         else {
                 
@@ -26,6 +19,7 @@ console.log(Order);
                 
                 if (Orders) {
                     // const newQty = qty + 1;
+                    console.log(2)
         
         
                     res.status(200).json(Orders);
@@ -37,6 +31,8 @@ console.log(Order);
                 
             });
             //   calcTotalPrice(result);
+            console.log(3);
+            
             await result.save();
             return res.status(201).json(result);}
         }
@@ -58,7 +54,7 @@ exports.getcart = async (req, res) => {
 exports.deleteOrderById = async (req, res) => {
     const { productId,userid } = req.body;
 
-console.log(productId);
+// console.log(productId);
 
     // if (!id || !mongoose.Types.ObjectId.isValid(id)) {
     //   return res.status(400).json({ message: 'Invalid Order ID' });
@@ -78,43 +74,35 @@ exports.getadmin = async (req, res) => {
     // if (user) {}
     res.status(200).json(CartOrders)
 }
-exports.updateOrderById = async (req, res) => {
-    const { id } = req.body;
-
-    const test = await order.find({ _id: id });
-    // console.log(test[0].status);
-    const newstatus = test[0].status;
-
-    try {
-        const updatedOrder = await order.findByIdAndUpdate(id, { status: !newstatus }, { new: true });
-        const CartOrders = await order.find().populate('produect').populate('userid');
-
-        res.status(200).json(CartOrders);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-}
-exports.received = async (req, res) => {
-    const { id } = req.body;
-
-    const test = await order.find({ _id: id });
-    // console.log(test[0].status);
-    const newreceived = test[0].received;
+exports.updateOrderstatus = async (req, res) => {
+    const { status,userid } = req.body;
+    console.log(status,userid);
+    
+   
 
     try {
- await order.findByIdAndUpdate(id, { received: !newreceived }, { new: true });
-        const CartOrders = await order.find().populate('produect').populate('userid');
-
-        res.status(200).json(CartOrders);
+        // const { userid } = req.body
+        const Orders = await order.findOneAndUpdate(
+            { userid }, 
+            {
+              $set: {
+              "cartItem.$[].status": status 
+              }
+            },
+            { new: true }
+          );
+          console.log(Orders);
+          
+          res.status(200).json(Orders)
     } catch (err) {
         res.status(500).json({ error: err.message });
-    }
-}
+    }}
+
 exports.qty = async (req, res) => {
     const { productId,userid ,qty} = req.body;
 
     try {
-        const updatedOrder= await order.findOneAndUpdate({ userid:userid,cartItem: { $elemMatch: { productId: productId,received: false, Isdeleted: false} },  }, {"cartItem.$.qty": qty } , { new: true });
+        const updatedOrder= await order.findOneAndUpdate({ userid:userid,cartItem: { $elemMatch: { productId: productId,CheckOut:false,received: false, Isdeleted: false} },  }, {"cartItem.$.qty": qty } , { new: true });
 
         res.status(200).json(updatedOrder);
 
@@ -123,4 +111,22 @@ exports.qty = async (req, res) => {
         res.status(500).json({ error: err.message });
 
     }
+}
+exports.checkOut = async (req, res) => {
+    try {
+       const { userid } = req.body
+        const Orders = await order.findOneAndUpdate(
+            { userid }, 
+            {
+              $set: {
+              "cartItem.$[].CheckOut": true 
+              }
+            },
+            { new: true }
+          );
+        // if (user) {}
+        res.status(200).json(Orders)
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    } 
 }

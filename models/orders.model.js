@@ -11,18 +11,18 @@ const order = new mongoose.Schema({
       },
       totalPrice: Number,
       status: {
-        type: Boolean,
-        required: true
+        type: String,
+        enum: ['Pending', 'Accepted', 'Rejected', 'Delivered'],
+        default: 'Pending'
       },
-      received: {
-        type: Boolean,
-        required: true
-
-      },
+  
       Isdeleted: {
         type: Boolean,
         default: false
-      }
+      },
+      CheckOut: {
+        type: Boolean,
+        default: false},
     }
 
   ],
