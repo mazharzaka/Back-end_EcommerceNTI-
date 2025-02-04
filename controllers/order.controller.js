@@ -53,6 +53,17 @@ exports.getcart = async (req, res) => {
    
     res.status(200).json(orders)
 }
+exports.getMyoreders = async (req, res) => {
+    const { userid } = req.body
+
+    // console.log(req.body);
+
+    const CartOrders = await order.find({ userid }).populate('cartItem.productId');
+   const orders= CartOrders[0]?.cartItem.filter((item) => item.status === "Delivered")
+//    console.log(orders);
+   
+    res.status(200).json(orders)
+}
 exports.deleteOrderById = async (req, res) => {
     const { productId,userid } = req.body;
 
