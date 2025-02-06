@@ -48,19 +48,28 @@ exports.getcart = async (req, res) => {
     // console.log(req.body);
 
     const CartOrders = await order.find({ userid }).populate('cartItem.productId');
-   const orders= CartOrders[0]?.cartItem.filter((item) => item.status !== "Delivered")
-   console.log(orders);
+   const orders=  CartOrders?.map((order) => ({
+    ...order,
+    cartItem: order.cartItem.filter((item) => item.status !== "Delivered"),
+}));
+
+   const total= orders[0]?.cartItem.reduce((a, b) => a +b.productId.price* b.qty, 0)
+   await order.findOneAndUpdate({ userid:userid }, { totalPriceCart:total}, { new: true });
+//    console.log(orders);
    
     res.status(200).json(orders)
 }
 exports.getMyoreders = async (req, res) => {
     const { userid } = req.body
-
-    // console.log(req.body);
-
     const CartOrders = await order.find({ userid }).populate('cartItem.productId');
-   const orders= CartOrders[0]?.cartItem.filter((item) => item.status === "Delivered")
-//    console.log(orders);
+    const orders= CartOrders.map(order => ({
+        ...order,
+        cartItem: order.cartItem.filter(item => item.status === "Delivered"),
+    }))
+ 
+    const total= orders[0]?.cartItem.reduce((a, b) => a +b.productId.price* b.qty, 0)
+    await order.findOneAndUpdate({ userid:userid }, { totalPriceOrder:total}, { new: true });
+    console.log(orders);
    
     res.status(200).json(orders)
 }

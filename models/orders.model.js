@@ -32,7 +32,8 @@ const order = new mongoose.Schema({
     ref: 'user',
     required: true
   },
-  totalPriceCart: Number
+  totalPriceCart: Number,
+  totalPriceOrder: Number
 })
 const Order = mongoose.model('Order', order);
 
