@@ -19,7 +19,7 @@ exports.addorder = async (req, res) => {
             }));
 
             const total = orders[0]?.cartItem.reduce((acc, item) => acc + item.productId.price * item.qty, 0) || 0;
-            console.log(total + '///');
+            // console.log(total + '///');
 
             await order.findOneAndUpdate({ userid }, { totalPriceCart: total }, { new: true });
             res.status(200).json(Order);
@@ -122,8 +122,13 @@ exports.getadmin = async (req, res) => {
 
 
     const CartOrders = await order.find().populate('cartItem.productId').populate('userid');
-    // if (user) {}
-    res.status(200).json(CartOrders)
+    const orders = CartOrders?.map((order) => ({
+        ...order.toObject(),
+        cartItem: order.cartItem.filter((item) => item.status !== "Delivered"),
+    }));
+console.log(orders[0]);
+
+    res.status(200).json(orders[0])
 }
 exports.updateOrderstatus = async (req, res) => {
     const { status, userid ,id} = req.body;
