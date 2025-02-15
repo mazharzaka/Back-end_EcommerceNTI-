@@ -96,7 +96,7 @@ exports.deleteOrderById = async (req, res) => {
     try {
         await order.findOneAndUpdate(
             { userid },
-            { $pull: { cartItem: { productId: productId } } }, 
+            { $pull: { cartItem: { _id: productId } } }, 
             { new: true }
         );
         
