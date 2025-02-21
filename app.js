@@ -11,7 +11,14 @@ const port = 3000;
 const app = express();
 app.use(express.json());
 connectDB();
-app.use(cors({origin:'http://localhost:4200'}));
+// app.use(cors({origin:'http://localhost:4200'}));
+const corsOptions = {
+    origin: ["http://localhost:3001", "http://localhost:4200"], // React و Angular
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type,Authorization",
+  };
+  
+  app.use(cors(corsOptions));
 app.use("/imgs",express.static('imgs'));
 app.use('/userType',userTypeRouter);
 app.use('/user',userRouter);
