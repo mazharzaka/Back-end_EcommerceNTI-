@@ -13,6 +13,7 @@ exports.getProducts = async (req, res) => {
     try {
         const products = await productModel.find();
         res.status(200).json(products);
+
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -75,5 +76,37 @@ exports.produect= async (req,res)=>{
     catch(err){
         res.status(500).json({ error: err.message });
 
+    }
+}
+exports.getActiveProdects=async (req,res)=>{
+   try {
+        const Allproducts = await productModel.find();
+        // console.log("Allproducts", Allproducts);
+        
+       const products= Allproducts.filter(e=>e.Isdeleted===false)
+        res.status(200).json(products);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
+exports.searchProduct = async (req, res) => {
+    const { search } = req.body;
+    
+    try {
+        if (!search || search.trim() === '') {
+            const products = await productModel.find();
+            return res.status(200).json(products);
+        }
+        const products = await productModel.find({
+            $or: [
+                { name: { $regex: search, $options: 'i' } },
+                { desc: { $regex: search, $options: 'i' } },
+                { category: { $regex: search, $options: 'i' } }
+            ],
+            Isdeleted: false // Ensure only non-deleted products are returned
+        });
+        res.status(200).json(products);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 }

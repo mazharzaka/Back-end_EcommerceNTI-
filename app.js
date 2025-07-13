@@ -13,7 +13,7 @@ app.use(express.json());
 connectDB();
 // app.use(cors({origin:'http://localhost:4200'}));
 const corsOptions = {
-    origin: ["http://localhost:3001", "http://localhost:4200"], // React و Angular
+    origin: "*", // React و Angular
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type,Authorization",
   };
